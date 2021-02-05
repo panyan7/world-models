@@ -2,6 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 def plot_rollout():
     """ Plot a rollout """
     from torch.utils.data import DataLoader
@@ -34,6 +35,7 @@ def plot_rollout():
             print(action)
             plt.pause(.01)
         break
+
 
 if __name__ == '__main__':
     plot_rollout()

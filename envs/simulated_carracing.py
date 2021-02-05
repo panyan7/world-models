@@ -13,7 +13,8 @@ from utils.misc import LSIZE, RSIZE, RED_SIZE
 
 import numpy as np
 
-class SimulatedCarracing(gym.Env): # pylint: disable=too-many-instance-attributes
+
+class SimulatedCarracing(gym.Env):  # pylint: disable=too-many-instance-attributes
     """
     Simulated Car Racing.
 
@@ -23,6 +24,7 @@ class SimulatedCarracing(gym.Env): # pylint: disable=too-many-instance-attribute
     :args directory: directory from which the vae and mdrnn are
     loaded.
     """
+
     def __init__(self, directory):
         vae_file = join(directory, 'vae', 'best.tar')
         rnn_file = join(directory, 'mdrnn', 'best.tar')
@@ -39,7 +41,7 @@ class SimulatedCarracing(gym.Env): # pylint: disable=too-many-instance-attribute
         vae_state = torch.load(vae_file, map_location=lambda storage, location: storage)
         print("Loading VAE at epoch {}, "
               "with test error {}...".format(
-                  vae_state['epoch'], vae_state['precision']))
+            vae_state['epoch'], vae_state['precision']))
         vae.load_state_dict(vae_state['state_dict'])
         self._decoder = vae.decoder
 
@@ -48,7 +50,7 @@ class SimulatedCarracing(gym.Env): # pylint: disable=too-many-instance-attribute
         rnn_state = torch.load(rnn_file, map_location=lambda storage, location: storage)
         print("Loading MDRNN at epoch {}, "
               "with test error {}...".format(
-                  rnn_state['epoch'], rnn_state['precision']))
+            rnn_state['epoch'], rnn_state['precision']))
         rnn_state_dict = {k.strip('_l0'): v for k, v in rnn_state['state_dict'].items()}
         self._rnn.load_state_dict(rnn_state_dict)
 
@@ -85,7 +87,7 @@ class SimulatedCarracing(gym.Env): # pylint: disable=too-many-instance-attribute
             pi = pi.squeeze()
             mixt = Categorical(torch.exp(pi)).sample().item()
 
-            self._lstate = mu[:, mixt, :] # + sigma[:, mixt, :] * torch.randn_like(mu[:, mixt, :])
+            self._lstate = mu[:, mixt, :]  # + sigma[:, mixt, :] * torch.randn_like(mu[:, mixt, :])
             self._hstate = n_h
 
             self._obs = self._decoder(self._lstate)
@@ -98,7 +100,7 @@ class SimulatedCarracing(gym.Env): # pylint: disable=too-many-instance-attribute
 
             return np_obs, r.item(), d.item() > 0
 
-    def render(self): # pylint: disable=arguments-differ
+    def render(self):  # pylint: disable=arguments-differ
         """ Rendering """
         import matplotlib.pyplot as plt
         if not self.monitor:
@@ -109,16 +111,18 @@ class SimulatedCarracing(gym.Env): # pylint: disable=too-many-instance-attribute
         self.monitor.set_data(self._visual_obs)
         plt.pause(.01)
 
+
 if __name__ == '__main__':
     # argument parsing
     parser = argparse.ArgumentParser()
     parser.add_argument('--logdir', type=str, help='Directory from which MDRNN and VAE are '
-                        'retrieved.')
+                                                   'retrieved.')
     args = parser.parse_args()
     env = SimulatedCarracing(args.logdir)
 
     env.reset()
     action = np.array([0., 0., 0.])
+
 
     def on_key_press(event):
         """ Defines key pressed behavior """
@@ -131,6 +135,7 @@ if __name__ == '__main__':
         if event.key == 'right':
             action[0] = 1
 
+
     def on_key_release(event):
         """ Defines key pressed behavior """
         if event.key == 'up':
@@ -141,6 +146,7 @@ if __name__ == '__main__':
             action[0] = 0
         if event.key == 'right' and action[0] == 1:
             action[0] = 0
+
 
     env.figure.canvas.mpl_connect('key_press_event', on_key_press)
     env.figure.canvas.mpl_connect('key_release_event', on_key_release)

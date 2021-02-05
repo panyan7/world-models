@@ -7,7 +7,8 @@ import torch.nn as nn
 import torch.nn.functional as f
 from torch.distributions.normal import Normal
 
-def gmm_loss(batch, mus, sigmas, logpi, reduce=True): # pylint: disable=too-many-arguments
+
+def gmm_loss(batch, mus, sigmas, logpi, reduce=True):  # pylint: disable=too-many-arguments
     """ Computes the gmm loss.
 
     Compute minus the log probability of batch under the GMM model described
@@ -45,6 +46,7 @@ def gmm_loss(batch, mus, sigmas, logpi, reduce=True): # pylint: disable=too-many
         return - torch.mean(log_prob)
     return - log_prob
 
+
 class _MDRNNBase(nn.Module):
     def __init__(self, latents, actions, hiddens, gaussians):
         super().__init__()
@@ -59,13 +61,15 @@ class _MDRNNBase(nn.Module):
     def forward(self, *inputs):
         pass
 
+
 class MDRNN(_MDRNNBase):
     """ MDRNN model for multi steps forward """
+
     def __init__(self, latents, actions, hiddens, gaussians):
         super().__init__(latents, actions, hiddens, gaussians)
         self.rnn = nn.LSTM(latents + actions, hiddens)
 
-    def forward(self, actions, latents): # pylint: disable=arguments-differ
+    def forward(self, actions, latents):  # pylint: disable=arguments-differ
         """ MULTI STEPS forward.
 
         :args actions: (SEQ_LEN, BSIZE, ASIZE) torch tensor
@@ -105,13 +109,15 @@ class MDRNN(_MDRNNBase):
 
         return mus, sigmas, logpi, rs, ds
 
+
 class MDRNNCell(_MDRNNBase):
     """ MDRNN model for one step forward """
+
     def __init__(self, latents, actions, hiddens, gaussians):
         super().__init__(latents, actions, hiddens, gaussians)
         self.rnn = nn.LSTMCell(latents + actions, hiddens)
 
-    def forward(self, action, latent, hidden): # pylint: disable=arguments-differ
+    def forward(self, action, latent, hidden):  # pylint: disable=arguments-differ
         """ ONE STEP forward.
 
         :args actions: (BSIZE, ASIZE) torch tensor

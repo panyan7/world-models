@@ -24,12 +24,12 @@ from utils.misc import flatten_parameters
 parser = argparse.ArgumentParser()
 parser.add_argument('--logdir', type=str, help='Where everything is stored.')
 parser.add_argument('--n-samples', type=int, help='Number of samples used to obtain '
-                    'return estimate.')
+                                                  'return estimate.')
 parser.add_argument('--pop-size', type=int, help='Population size.')
 parser.add_argument('--target-return', type=float, help='Stops once the return '
-                    'gets above target_return')
+                                                        'gets above target_return')
 parser.add_argument('--display', action='store_true', help="Use progress bars if "
-                    "specified.")
+                                                           "specified.")
 parser.add_argument('--max-workers', type=int, help='Maximum number of workers.',
                     default=32)
 args = parser.parse_args()
@@ -140,6 +140,7 @@ def evaluate(solutions, results, rollouts=100):
 
     return best_guess, np.mean(restimates), np.std(restimates)
 
+
 ################################################################################
 #                           Launch CMA                                         #
 ################################################################################
@@ -206,7 +207,6 @@ while not es.stop():
         if - best > args.target_return:
             print("Terminating controller training with value {}...".format(best))
             break
-
 
     epoch += 1
 
